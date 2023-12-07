@@ -57,13 +57,25 @@ Let's say we wanted a prefix-consistent history of 2 processes running 3 operati
 ```
 
 Runs are fully deterministic. Ask for the same parameters again and you'll get
-an identical history.
+an identical history. If you want a different random seed, you can ask for it:
+
+```clj
+=> (sim/run {:seed 3 :limit 1})
+{:concurrency 3, :limit 1, :db :si, :generator :list-append, :seed 3, :history [{:index 0, :time -1, :type :invoke, :process 0, :f :txn, :value [[:r 9 nil]]} {:index 1, :time -1, :type :ok, :process 0, :f :txn, :value [[:r 9 nil]]}]}
+
+=> (sim/run {:seed 4 :limit 1})
+{:concurrency 3, :limit 1, :db :si, :generator :list-append, :seed 4, :history [{:index 0, :time -1, :type :invoke, :process 1, :f :txn, :value [[:append 9 1] [:r 4 nil]]} {:index 1, :time -1, :type :ok, :process 1, :f :txn, :value [[:append 9 1] [:r 4 nil]]}]}
+```
+
+Runs are cached to disk transparently, making subsequent requests for identical
+parameters much, much faster. You can erase this cache with
+`(jepsen.history.cache/clear!)`.
 
 ## CLI Use
 
-To build a fat jar, install a JDK, leiningen, and run `lein uberjar`. This will
-emit a jar in `target/history.sim-...-standalone.jar` with an executable
-binary. Then try
+To build a fat jar, first install a JDK, install leiningen, and run `lein
+uberjar`. This will emit a jar in `target/history.sim-...-standalone.jar` with
+an executable binary. Then try
 
 ```
 java -jar target/history.sim-0.1.0-SNAPSHOT-standalone.jar history
@@ -129,6 +141,16 @@ Options:
   -l, --limit NUM        16            How many operations would you like to invoke?
       --seed NUM         69            The random seed for this history
 ```
+
+## DBs
+
+Databases live in `jepsen.history.sim.db`. There are presently four
+implementations:
+
+- `brat`, which has no concurrency control whatsoever
+- `prefix`, which is "snapshot isolation, without the first-committer-wins checkl"
+- `si`, which is a straightforward, by-the-book implementation of single-node snapshot isolation
+- `ssi`, which makes SI serializable by promoting all writes to reads
 
 ## License
 

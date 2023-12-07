@@ -65,6 +65,46 @@
              :time -1}])}
            t))))
 
+(deftest brat-test
+  (is (= (h/history
+           [{:process 0,
+             :type :invoke,
+             :f :txn,
+             :value [[:r 9 nil] [:append 9 1]],
+             :index 0,
+             :time -1}
+            {:process 1,
+             :type :invoke,
+             :f :txn,
+             :value [[:r 9 nil] [:append 9 2]],
+             :index 1,
+             :time -1}
+            {:process 2,
+             :type :invoke,
+             :f :txn,
+             :value [[:r 6 nil] [:r 8 nil]],
+             :index 2,
+             :time -1}
+            {:process 2,
+             :type :ok,
+             :f :txn,
+             :value [[:r 6 nil] [:r 8 nil]],
+             :index 3,
+             :time -1}
+            {:process 0,
+             :type :ok,
+             :f :txn,
+             :value [[:r 9 nil] [:append 9 [1]]],
+             :index 4,
+             :time -1}
+            {:process 1,
+             :type :ok,
+             :f :txn,
+             :value [[:r 9 [1]] [:append 9 [1 2]]],
+             :index 5,
+             :time -1}])
+         (:history (run {:db :brat, :limit 3, :seed 123})))))
+
 (defn ms
   "Helper for friendly nanos -> milliseconds"
   [nanos]

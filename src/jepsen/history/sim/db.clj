@@ -26,6 +26,26 @@
           Returns [database', element]. If element is ::block, the given
           append can't be performed yet, but could be later."))
 
+; Brat performs no concurrency control. Aborts are not rolled back. You want
+; G0s? Here you go.
+(defrecord BratDB [state]
+  Database
+  (begin [db process] db)
+  (commit [db process] [db true])
+  (abort [db process] [db true])
+  (read [db process k] [db (get state k)])
+  (append [db process k element]
+    (let [v (conj (get state k []) element)]
+      [(BratDB. (assoc state k v)) v])))
+
+(defn brat-db
+  "Constructs a bratty database which performs no concurrency control and does
+  not roll back aborted transactions."
+  ([]
+   (brat-db {}))
+  ([opts]
+   (BratDB. {})))
+
 ; Straightforward SI without first-committer-wins checks. This should give us
 ; prefix consistency, which is, to be clear, hot garbage.
 ;
@@ -184,6 +204,7 @@
 
 (def dbs
   "A map of standard DB types to DB constructor functions."
-  {:prefix prefix-db
+  {:brat   brat-db
+   :prefix prefix-db
    :si     si-db
    :ssi    ssi-db})
