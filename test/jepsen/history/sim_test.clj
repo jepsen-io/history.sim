@@ -9,100 +9,109 @@
 (deftest si-history-test
   (let [t (run {:db    :si
                 :limit 4})]
-    (is (= {:concurrency 3,
+    (is (= {:max-txn-length 4,
+           :concurrency 3,
            :limit 4,
+           :key-count 10,
            :db :si,
-           :generator :list-append,
-           :seed 69
-           :history (h/history
+           :max-writes-per-key 32,
+           :key-dist :exponential,
+           :history
+           (h/history
            [{:process 0,
              :type :invoke,
              :f :txn,
-             :value [[:append 9 1] [:r 9 nil]],
+             :value [[:append 9 1] [:r 9 nil] [:r 9 nil] [:append 9 2]],
              :index 0,
              :time -1}
             {:process 1,
              :type :invoke,
              :f :txn,
-             :value [[:append 9 2]],
+             :value [[:r 8 nil] [:r 9 nil] [:append 8 1]],
              :index 1,
              :time -1}
             {:process 2,
              :type :invoke,
              :f :txn,
-             :value [[:r 8 nil] [:r 9 nil]],
+             :value [[:append 9 3]],
              :index 2,
              :time -1}
-            {:process 0,
+            {:process 1,
              :type :ok,
              :f :txn,
-             :value [[:append 9 1] [:r 9 [1]]],
+             :value [[:r 8 nil] [:r 9 nil] [:append 8 1]],
              :index 3,
              :time -1}
-            {:process 0,
+            {:process 1,
              :type :invoke,
              :f :txn,
-             :value [[:r 7 nil]],
+             :value [[:r 9 nil] [:append 8 2] [:r 9 nil]],
              :index 4,
-             :time -1}
-            {:process 1,
-             :type :fail,
-             :f :txn,
-             :value [[:append 9 2]],
-             :index 5,
-             :time -1}
-            {:process 0,
-             :type :ok,
-             :f :txn,
-             :value [[:r 7 nil]],
-             :index 6,
              :time -1}
             {:process 2,
              :type :ok,
              :f :txn,
-             :value [[:r 8 nil] [:r 9 nil]],
+             :value [[:append 9 3]],
+             :index 5,
+             :time -1}
+            {:process 1,
+             :type :ok,
+             :f :txn,
+             :value [[:r 9 [3]] [:append 8 2] [:r 9 [3]]],
+             :index 6,
+             :time -1}
+            {:process 0,
+             :type :fail,
+             :f :txn,
+             :value [[:append 9 1] [:r 9 nil] [:r 9 nil] [:append 9 2]],
              :index 7,
-             :time -1}])}
+             :time -1}]),
+           :seed 69,
+           :generator :list-append,
+           :key-dist-base 2,
+           :min-txn-length 1}
            t))))
 
 (deftest brat-test
   (is (= (h/history
-           [{:process 0,
-             :type :invoke,
-             :f :txn,
-             :value [[:r 9 nil] [:append 9 1]],
-             :index 0,
-             :time -1}
-            {:process 1,
-             :type :invoke,
-             :f :txn,
-             :value [[:r 9 nil] [:append 9 2]],
-             :index 1,
-             :time -1}
-            {:process 2,
-             :type :invoke,
-             :f :txn,
-             :value [[:r 6 nil] [:r 8 nil]],
-             :index 2,
-             :time -1}
-            {:process 2,
-             :type :ok,
-             :f :txn,
-             :value [[:r 6 nil] [:r 8 nil]],
-             :index 3,
-             :time -1}
+           [
             {:process 0,
-             :type :ok,
-             :f :txn,
-             :value [[:r 9 nil] [:append 9 [1]]],
-             :index 4,
-             :time -1}
-            {:process 1,
-             :type :ok,
-             :f :txn,
-             :value [[:r 9 [1]] [:append 9 [1 2]]],
-             :index 5,
-             :time -1}])
+            :type :invoke,
+            :f :txn,
+            :value [[:r 9 nil] [:append 9 1] [:append 6 1] [:append 9 2]],
+            :index 0,
+            :time -1}
+           {:process 1,
+            :type :invoke,
+            :f :txn,
+            :value [[:r 9 nil] [:r 6 nil] [:r 8 nil] [:append 9 3]],
+            :index 1,
+            :time -1}
+           {:process 2,
+            :type :invoke,
+            :f :txn,
+            :value [[:r 8 nil] [:r 8 nil]],
+            :index 2,
+            :time -1}
+           {:process 1,
+            :type :ok,
+            :f :txn,
+            :value [[:r 9 nil] [:r 6 nil] [:r 8 nil] [:append 9 [1 3]]],
+            :index 3,
+            :time -1}
+           {:process 0,
+            :type :ok,
+            :f :txn,
+            :value [[:r 9 nil] [:append 9 [1]] [:append 6 [1]] [:append 9 [1 3 2]]],
+            :index 4,
+            :time -1}
+           {:process 2,
+            :type :ok,
+            :f :txn,
+            :value [[:r 8 nil] [:r 8 nil]],
+            :index 5,
+            :time -1}
+            ])
          (:history (run {:db :brat, :limit 3, :seed 123})))))
 
 (defn ms
@@ -110,7 +119,7 @@
   [nanos]
   (float (* 1e-6 nanos)))
 
-(deftest ^:perf cache-test
+(deftest cache-test
   ; Very helpful to lower this for debugging
   (with-redefs [cache/chunk-size 16384]
     (cache/clear!)

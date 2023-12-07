@@ -44,7 +44,9 @@ db, the generator, concurrency, and so on. `run` fills in defaults if you don't
 provide any. Once run, a test has a `:history` field with a Jepsen history of
 operations.
 
-Let's say we wanted a prefix-consistent history of 2 processes running 3 operations:
+Key distribution, transaction size, etc are all configurable; see
+`jepsen.history.sim/run`'s docs. Let's say we wanted a prefix-consistent
+history of 2 processes running 3 operations:
 
 ```clj
 => (->> (sim/run {:db :prefix, :concurrency 2, :limit 3}) :history (mapv prn))
@@ -125,7 +127,6 @@ Xeon.
 For full usage, run jepsen.history.sim without any arguments.
 
 ```
-$ java -jar target/history.sim-0.1.0-SNAPSHOT-standalone.jar
 Usage: java -jar JAR_FILE [command] [args ...]
 
 Commands:
@@ -134,12 +135,18 @@ Commands:
 
 Options:
 
-  -c, --concurrency NUM  3             How many concurrent clients?
-      --db DB            :si           What kind of database are we simulating?
-      --format FORMAT    :edn          What format to emit operations in
-  -g, --gen GENERATOR    :list-append  What kind of workload would you like to generate?
-  -l, --limit NUM        16            How many operations would you like to invoke?
-      --seed NUM         69            The random seed for this history
+  -c, --concurrency NUM            3             How many concurrent clients?
+      --db DB                      :si           What kind of database are we simulating?
+      --format FORMAT              :edn          What format to emit operations in
+  -g, --gen GENERATOR              :list-append  What kind of workload would you like to generate?
+      --key-dist DISTRIBUTION      :exponential  Would you like an exponential or uniform distribution of keys in transactions?
+      --key-dist-base NUMBER       2             Base for the exponential distribution of keys. 2 means each key is twice as frequent as the last.
+      --key-count NUMBER           10            How many keys should transactions interact with at any given time?
+      --min-txn-length NUMBER      1             How many micro-operations should transactions perform, at minimum?
+      --max-txn-length NUMBER      4             How many micro-operations should transactions perform, at maximum?
+      --max-writes-per-key NUMBER  32            How many writes should we try against each key before selecting a new one?
+  -l, --limit NUM                  16            How many operations would you like to invoke?
+      --seed NUM                   69            The random seed for this history
 ```
 
 ## DBs
@@ -149,7 +156,7 @@ implementations:
 
 - `brat`, which has no concurrency control whatsoever
 - `prefix`, which is "snapshot isolation, without the first-committer-wins checkl"
-- `si`, which is a straightforward, by-the-book implementation of single-node snapshot isolation
+- `si`, which is a by-the-book implementation of single-node snapshot isolation
 - `ssi`, which makes SI serializable by promoting all writes to reads
 
 ## License

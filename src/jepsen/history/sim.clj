@@ -14,15 +14,27 @@
   `(binding [data.gen/*rnd* (Random. ~seed)]
      ~@body))
 
+(def test-defaults
+  "Default parameters for tests"
+  {:seed               69
+   :concurrency        3
+   :limit              16
+   :db                 :si
+   :generator          :list-append
+   ; Generator params
+   :key-dist           :exponential
+   :key-dist-base      2
+   :key-count          10
+   :min-txn-length     1
+   :max-txn-length     4
+   :max-writes-per-key 32
+   })
+
+
 (defn expand-test
   "Expands a test with default options."
   [test]
-  (merge {:seed        69
-          :concurrency 3
-          :limit       16
-          :db          :si
-          :generator   :list-append}
-         test))
+  (merge test-defaults test))
 
 (defn run!
   "Like run, but actually runs the simulator instead of potentially loading
