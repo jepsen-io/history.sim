@@ -9,6 +9,8 @@
 (deftest si-history-test
   (let [t (run {:db    :si
                 :limit 4})]
+    (is (= clojure.lang.PersistentVector
+           (-> t :history first :value type)))
     (is (= {:max-txn-length 4,
            :concurrency 3,
            :limit 4,

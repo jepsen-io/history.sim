@@ -10,6 +10,7 @@
                  [org.clojure/data.fressian "1.0.0"]
                  [org.clojure/data.generators "1.0.0"]
                  [org.clojure/tools.cli "1.0.219"]]
+  :java-source-paths ["src/"]
   :main         jepsen.history.sim.cli
   :repl-options {:init-ns jepsen.history.sim}
   :test-selectors {:default (fn [m] (not (:perf m)))

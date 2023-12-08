@@ -13,7 +13,7 @@
                     File
                     PushbackReader)
            (jepsen.history Op)
-           (org.fressian FressianReader)
+           (jepsen.history.sim FressianReader)
            (org.fressian.handlers ConvertList
                                   WriteHandler
                                   ReadHandler)))
