@@ -1,9 +1,13 @@
 # jepsen.history.sim
 
+[![Clojars Project](https://img.shields.io/clojars/v/io.jepsen/history.sim.svg)](https://clojars.org/io.jepsen/history.sim)
+
 When building a database checker, you need histories to check. These histories
 should exhibit certain classes of anomalies, so that you can test whether the
 checker is correct. They should be determistic, so you can build regression
-tests. They should be large enough to serve as performance benchmarks. This library generates those histories.
+tests. They should be large enough to serve as performance benchmarks. This
+library generates those histories by simulating concurrent requests against
+models of databases with assorted concurrency control schemes.
 
 As a Clojure library, jepsen.history.sim provides histories to JVM programs
 which ask for them. These histories are cached in your local tmpdir, so they're
