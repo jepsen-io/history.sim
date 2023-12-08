@@ -1,4 +1,4 @@
-(defproject io.jepsen/history.sim "0.1.0-SNAPSHOT"
+(defproject io.jepsen/history.sim "0.1.0"
   :description "Generates Jepsen histories from simulated databases, for testing safety checkers"
   :url "https://github.com/jepsen-io/history.sim"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
