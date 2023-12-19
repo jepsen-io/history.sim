@@ -36,7 +36,7 @@
   (read [db process k] [db (get state k)])
   (append [db process k element]
     (let [v (conj (get state k []) element)]
-      [(BratDB. (assoc state k v)) v])))
+      [(BratDB. (assoc state k v)) element])))
 
 (defn brat-db
   "Constructs a bratty database which performs no concurrency control and does

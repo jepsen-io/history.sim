@@ -98,13 +98,13 @@
            {:process 1,
             :type :ok,
             :f :txn,
-            :value [[:r 9 nil] [:r 6 nil] [:r 8 nil] [:append 9 [1 3]]],
+            :value [[:r 9 nil] [:r 6 nil] [:r 8 nil] [:append 9 3]],
             :index 3,
             :time -1}
            {:process 0,
             :type :ok,
             :f :txn,
-            :value [[:r 9 nil] [:append 9 [1]] [:append 6 [1]] [:append 9 [1 3 2]]],
+            :value [[:r 9 nil] [:append 9 1] [:append 6 1] [:append 9 2]],
             :index 4,
             :time -1}
            {:process 2,
