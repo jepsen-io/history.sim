@@ -170,7 +170,7 @@
                      writer (writer! test chunk-number)]
                  (fress/write-object writer op)
                  (recur writer chunk-number 1))))
-				 (do (.close writer)
+				 (do (.close ^Closeable writer)
              test)))
 
 (defn load-chunk
