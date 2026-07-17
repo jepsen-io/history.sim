@@ -1,6 +1,7 @@
 # jepsen.history.sim
 
 [![Clojars Project](https://img.shields.io/clojars/v/io.jepsen/history.sim.svg)](https://clojars.org/io.jepsen/history.sim)
+[![cljdoc badge](https://cljdoc.org/badge/io.jepsen/history.sim)](https://cljdoc.org/d/io.jepsen/history.sim)
 
 When building a database checker, you need histories to check. These histories
 should exhibit certain classes of anomalies, so that you can test whether the
