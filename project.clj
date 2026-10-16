@@ -1,10 +1,10 @@
-(defproject io.jepsen/history.sim "0.1.4"
+(defproject io.jepsen/history.sim "0.1.5"
   :description "Generates Jepsen histories from simulated databases, for testing safety checkers"
   :url "https://github.com/jepsen-io/history.sim"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[cheshire "6.2.0"]
-                 [io.jepsen/history "0.1.8"]
+                 [io.jepsen/history "0.1.9"]
                  [org.clojure/clojure "1.12.6"]
                  [org.clojure/data.fressian "1.1.1"]
                  [org.clojure/data.generators "1.1.1"]
