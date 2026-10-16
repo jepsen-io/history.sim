@@ -4,7 +4,6 @@
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[cheshire "6.2.0"]
-                 [com.aphyr/bifurcan-clj "0.1.4"]
                  [io.jepsen/history "0.1.8"]
                  [org.clojure/clojure "1.12.5"]
                  [org.clojure/data.fressian "1.1.1"]
